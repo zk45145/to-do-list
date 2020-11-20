@@ -1,0 +1,65 @@
+body {
+  background-color: whitesmoke;
+}
+
+.app {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.searchBox {
+  margin-top: 0px;
+  margin-bottom: 25px;
+}
+
+ul {
+  list-style: none;
+  margin: 0px 10px;
+  padding: 5px 0;
+}
+
+ul > li {
+  margin: 10px 0;
+  padding: 5px 5px;
+}
+
+ul > li:hover {
+  cursor: pointer;
+  background-color: black;
+  border-radius: 5px;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+.form {
+  margin-top: 10px;
+}
+
+.alertMessage {
+  margin: 10px 0;
+  padding: 8px;
+  background-color: #ff6699;
+  color: black;
+}
+
+.active {
+  background-color: black;
+  color: white;
+  margin: 10px 0;
+  padding: 5px 5px;
+  border: solid 1px;
+  border-radius: 5px;
+}
+
+#tasksList span {
+  background-color: rgb(109, 241, 197);
+  color: black;
+}
