@@ -67,35 +67,16 @@ editButton.addEventListener("click", (e) => {
   } else setAlertMessage("Nie zostało wybrane zadanie do edycji");
 });
 
-showTasks = () => {
-  alertMessage.classList.remove("alertMessage");
-  alertMessage.innerHTML = "";
-  let allTasks = JSON.parse(localStorage.getItem("allTasks"));
-  allTasks = allTasks === null ? [] : allTasks;
-  tasksList.innerHTML = "";
-  if (allTasks) {
-    allTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    for (var i = 0; i < allTasks.length; i++) {
-      let task = allTasks[i];
-      task.date = new Date(task.date);
-      tasksList.innerHTML +=
-        "<li id = task" +
-        i +
-        " value=" +
-        i +
-        " onClick=changeStatus(" +
-        i +
-        ")> " +
-        task.date.toISOString().substr(0, 10).replace(pattern, "$3.$2.$1") +
-        " | " +
-        task.name +
-        "</li>";
-      selectTaskForm.appendChild(tasksList);
-      statusCheck(task, i);
-    }
-  }
-  localStorage.setItem("allTasks", JSON.stringify(allTasks));
+showEditView = () => {
+  form.removeChild(addButton);
+  saveChangesButton = document.createElement("button");
+  saveChangesButton.setAttribute("onClick", "handleSaveChanges()");
+  saveChangesButton.textContent = "Zapisz zmiany";
+  cancelChangesButton = document.createElement("button");
+  cancelChangesButton.setAttribute("onClick", "setHomeScreen()");
+  cancelChangesButton.textContent = "Anuluj";
+  form.appendChild(saveChangesButton);
+  form.appendChild(cancelChangesButton);
 };
 
 handleSaveChanges = () => {
@@ -136,57 +117,42 @@ setHomeScreen = () => {
   showTasks();
 };
 
+showTasks = () => {
+  alertMessage.classList.remove("alertMessage");
+  alertMessage.innerHTML = "";
+  let allTasks = JSON.parse(localStorage.getItem("allTasks"));
+  allTasks = allTasks === null ? [] : allTasks;
+  tasksList.innerHTML = "";
+  if (allTasks) {
+    allTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    for (var i = 0; i < allTasks.length; i++) {
+      let task = allTasks[i];
+      task.date = new Date(task.date);
+      tasksList.innerHTML +=
+        "<li id = task" +
+        i +
+        " value=" +
+        i +
+        " onClick=changeStatus(" +
+        i +
+        ")> " +
+        task.date.toISOString().substr(0, 10).replace(pattern, "$3.$2.$1") +
+        " | " +
+        task.name +
+        "</li>";
+      statusCheck(task, i);
+    }
+    selectTaskForm.appendChild(tasksList);
+  }
+  localStorage.setItem("allTasks", JSON.stringify(allTasks));
+};
+
 changeStatus = (id) => {
   let allTasks = JSON.parse(localStorage.getItem("allTasks"));
   allTasks[id].active = !allTasks[id].active;
   localStorage.setItem("allTasks", JSON.stringify(allTasks));
   showTasks();
-};
-
-saveToLocalStorage = (task) => {
-  let allTasks = JSON.parse(localStorage.getItem("allTasks"));
-  allTasks = allTasks === null ? [] : allTasks;
-  allTasks[allTasks.length] = task;
-  localStorage.setItem("allTasks", JSON.stringify(allTasks));
-};
-
-highlightSearch = () => {
-  const text = document.querySelector("#searchField").value.toLowerCase();
-  if (text) {
-    if (
-      text == "li" ||
-      text == "<li" ||
-      text == "<li " ||
-      text == "</li>" ||
-      text == "</" ||
-      text == "</l" ||
-      text == "</li" ||
-      text == "<" ||
-      text == ">"
-    ) {
-      setAlertMessage("Nie odnaleziono frazy");
-    } else {
-      removeAlertMessage();
-      const query = new RegExp("(\\b" + text + ")", "gim");
-      const e = document.querySelector("#tasksList").innerHTML;
-      const enew = e.replace(/(<span>|<\/span>)/gim, "");
-      const newe = enew.replace(query, "<span>$1</span>");
-      document.querySelector("#tasksList").innerHTML = newe;
-      if (e === newe) setAlertMessage("Brak nowych dopasowań");
-    }
-  } else setAlertMessage("Wprowadź szukaną frazę");
-};
-
-showEditView = () => {
-  form.removeChild(addButton);
-  saveChangesButton = document.createElement("button");
-  saveChangesButton.setAttribute("onClick", "handleSaveChanges()");
-  saveChangesButton.textContent = "Zapisz zmiany";
-  cancelChangesButton = document.createElement("button");
-  cancelChangesButton.setAttribute("onClick", "setHomeScreen()");
-  cancelChangesButton.textContent = "Anuluj";
-  form.appendChild(saveChangesButton);
-  form.appendChild(cancelChangesButton);
 };
 
 statusCheck = (task, id) => {
@@ -198,6 +164,30 @@ statusCheck = (task, id) => {
       currentTask.classList.remove("active");
     }
   }
+};
+
+highlightSearch = () => {
+  const text = document.querySelector("#searchField").value.toLowerCase();
+  if (text) {
+    if (text == "li" || text == "value" || text == "onclick" || text == "id") {
+      setAlertMessage("Brak nowych dopasowań");
+    } else {
+      removeAlertMessage();
+      const query = new RegExp("(\\b" + text + "\\b)", "gim");
+      const e = document.querySelector("#tasksList").innerHTML;
+      const enew = e.replace(/(<span>|<\/span>)/gim, "");
+      const newe = enew.replace(query, "<span>$1</span>");
+      document.querySelector("#tasksList").innerHTML = newe;
+      if (e === newe) setAlertMessage("Brak nowych dopasowań");
+    }
+  } else setAlertMessage("Wprowadź szukaną frazę");
+};
+
+saveToLocalStorage = (task) => {
+  let allTasks = JSON.parse(localStorage.getItem("allTasks"));
+  allTasks = allTasks === null ? [] : allTasks;
+  allTasks[allTasks.length] = task;
+  localStorage.setItem("allTasks", JSON.stringify(allTasks));
 };
 
 setAlertMessage = (message) => {
